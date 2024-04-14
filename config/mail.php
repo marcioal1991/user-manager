@@ -45,26 +45,6 @@ return [
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
         ],
-
-        'ses' => [
-            'transport' => 'ses',
-        ],
-
-        'postmark' => [
-            'transport' => 'postmark',
-            // 'message_stream_id' => null,
-            // 'client' => [
-            //     'timeout' => 5,
-            // ],
-        ],
-
-        'mailgun' => [
-            'transport' => 'mailgun',
-            // 'client' => [
-            //     'timeout' => 5,
-            // ],
-        ],
-
         'sendmail' => [
             'transport' => 'sendmail',
             'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
@@ -78,22 +58,40 @@ return [
         'array' => [
             'transport' => 'array',
         ],
-
-        'failover' => [
-            'transport' => 'failover',
-            'mailers' => [
-                'smtp',
-                'log',
-            ],
-        ],
-
-        'roundrobin' => [
-            'transport' => 'roundrobin',
-            'mailers' => [
-                'ses',
-                'postmark',
-            ],
-        ],
+//
+//        'ses' => [
+//            'transport' => 'ses',
+//        ],
+//
+//        'postmark' => [
+//            'transport' => 'postmark',
+//            // 'message_stream_id' => null,
+//            // 'client' => [
+//            //     'timeout' => 5,
+//            // ],
+//        ],
+//
+//        'mailgun' => [
+//            'transport' => 'mailgun',
+//            // 'client' => [
+//            //     'timeout' => 5,
+//            // ],
+//        ],
+//        'failover' => [
+//            'transport' => 'failover',
+//            'mailers' => [
+//                'smtp',
+//                'log',
+//            ],
+//        ],
+//
+//        'roundrobin' => [
+//            'transport' => 'roundrobin',
+//            'mailers' => [
+//                'ses',
+//                'postmark',
+//            ],
+//        ],
     ],
 
     /*

@@ -18,6 +18,7 @@ RUN apt-get update \
             ca-certificates \
             curl \
             unzip \
+            sendmail \
     && echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu jammy main" > /etc/apt/sources.list.d/ondrej-php.list \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C
 
