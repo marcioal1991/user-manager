@@ -23,6 +23,9 @@ class CreateSuperAdminUser extends Command
      */
     public function handle(): void
     {
+
+        $this->components->alert('Create a new administrator user');
+
         $user = new User();
         $user->first_name = $this->askFirstName();
         $user->last_name = $this->askLastName();
@@ -30,8 +33,12 @@ class CreateSuperAdminUser extends Command
         $user->date_of_birth = $this->askDateOfBirth();
         $user->username = $this->askUsername();
         $user->password = $this->askPassword();
+        $user->email = $this->askEmail();
+        $user->superadmin = true;
 
         $user->save();
+
+        $this->components->task('User created successfully.');
     }
 
     protected function askFirstName(): string
@@ -93,6 +100,15 @@ class CreateSuperAdminUser extends Command
         return text(
             'Type your desirable username.',
             sprintf('E.g %s', fake()->userName()),
+            required: true,
+        );
+    }
+
+    protected function askEmail(): string
+    {
+        return text(
+            'Type your desirable email.',
+            sprintf('E.g %s', fake()->email()),
             required: true,
         );
     }

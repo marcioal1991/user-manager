@@ -19,13 +19,13 @@ services:
         networks:
             cfp-energy:
                 ipv4_address: ${WEBSERVER_HOST}
-    php:
+    php-fpm:
         build:
             context: docker/php
             args:
                 - USER_ID=1000
                 - USER=php
-        container_name: php
+        container_name: php_fpm
         working_dir: /srv/app/
         volumes:
             - .:/srv/app/
