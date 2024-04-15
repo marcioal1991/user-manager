@@ -16,3 +16,27 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::prefix('/users')->group(function (): void {
+    Route::get('/', [
+        \App\Http\Controllers\User\ListUserController::class,
+    ]);
+
+    Route::prefix('{user_id}')->group(function (): void {
+        Route::get('/', [
+            \App\Http\Controllers\User\ShowUserController::class,
+        ]);
+
+        Route::post('/', [
+            \App\Http\Controllers\User\CreateUserController::class,
+        ]);
+
+        Route::put('/', [
+            \App\Http\Controllers\User\UpdateUserController::class,
+        ]);
+
+        Route::delete('/', [
+            \App\Http\Controllers\User\DeleteUserController::class,
+        ]);
+    });
+});
