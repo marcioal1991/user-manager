@@ -40,11 +40,13 @@ class CreateUserRequest extends FormRequest
             'mobile' => [
                 'nullable',
                 'string',
+                'max:255',
             ],
             'email' => [
                 'required',
                 'string',
                 'email',
+                'max:255',
                 Rule::exists('user', 'email')
                     ->whereNull('deleted_at')
             ],
