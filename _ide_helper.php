@@ -3981,7 +3981,7 @@ namespace Illuminate\Support\Facades {
          * @static 
          */        public static function lock($name, $seconds = 0, $owner = null)
         {
-                        /** @var \Illuminate\Cache\FileStore $instance */
+                        /** @var \Illuminate\Cache\RedisStore $instance */
                         return $instance->lock($name, $seconds, $owner);
         }
                     /**
@@ -3993,7 +3993,7 @@ namespace Illuminate\Support\Facades {
          * @static 
          */        public static function restoreLock($name, $owner)
         {
-                        /** @var \Illuminate\Cache\FileStore $instance */
+                        /** @var \Illuminate\Cache\RedisStore $instance */
                         return $instance->restoreLock($name, $owner);
         }
                     /**
@@ -4003,50 +4003,70 @@ namespace Illuminate\Support\Facades {
          * @static 
          */        public static function flush()
         {
-                        /** @var \Illuminate\Cache\FileStore $instance */
+                        /** @var \Illuminate\Cache\RedisStore $instance */
                         return $instance->flush();
         }
                     /**
-         * Get the full path for the given cache key.
+         * Remove all expired tag set entries.
          *
-         * @param string $key
-         * @return string 
+         * @return void 
          * @static 
-         */        public static function path($key)
+         */        public static function flushStaleTags()
         {
-                        /** @var \Illuminate\Cache\FileStore $instance */
-                        return $instance->path($key);
+                        /** @var \Illuminate\Cache\RedisStore $instance */
+                        $instance->flushStaleTags();
         }
                     /**
-         * Get the Filesystem instance.
+         * Get the Redis connection instance.
          *
-         * @return \Illuminate\Filesystem\Filesystem 
+         * @return \Illuminate\Redis\Connections\Connection 
          * @static 
-         */        public static function getFilesystem()
+         */        public static function connection()
         {
-                        /** @var \Illuminate\Cache\FileStore $instance */
-                        return $instance->getFilesystem();
+                        /** @var \Illuminate\Cache\RedisStore $instance */
+                        return $instance->connection();
         }
                     /**
-         * Get the working directory of the cache.
+         * Get the Redis connection instance that should be used to manage locks.
          *
-         * @return string 
+         * @return \Illuminate\Redis\Connections\Connection 
          * @static 
-         */        public static function getDirectory()
+         */        public static function lockConnection()
         {
-                        /** @var \Illuminate\Cache\FileStore $instance */
-                        return $instance->getDirectory();
+                        /** @var \Illuminate\Cache\RedisStore $instance */
+                        return $instance->lockConnection();
         }
                     /**
-         * Set the cache directory where locks should be stored.
+         * Specify the name of the connection that should be used to store data.
          *
-         * @param string|null $lockDirectory
-         * @return \Illuminate\Cache\FileStore 
+         * @param string $connection
+         * @return void 
          * @static 
-         */        public static function setLockDirectory($lockDirectory)
+         */        public static function setConnection($connection)
         {
-                        /** @var \Illuminate\Cache\FileStore $instance */
-                        return $instance->setLockDirectory($lockDirectory);
+                        /** @var \Illuminate\Cache\RedisStore $instance */
+                        $instance->setConnection($connection);
+        }
+                    /**
+         * Specify the name of the connection that should be used to manage locks.
+         *
+         * @param string $connection
+         * @return \Illuminate\Cache\RedisStore 
+         * @static 
+         */        public static function setLockConnection($connection)
+        {
+                        /** @var \Illuminate\Cache\RedisStore $instance */
+                        return $instance->setLockConnection($connection);
+        }
+                    /**
+         * Get the Redis database instance.
+         *
+         * @return \Illuminate\Contracts\Redis\Factory 
+         * @static 
+         */        public static function getRedis()
+        {
+                        /** @var \Illuminate\Cache\RedisStore $instance */
+                        return $instance->getRedis();
         }
                     /**
          * Get the cache key prefix.
@@ -4055,8 +4075,19 @@ namespace Illuminate\Support\Facades {
          * @static 
          */        public static function getPrefix()
         {
-                        /** @var \Illuminate\Cache\FileStore $instance */
+                        /** @var \Illuminate\Cache\RedisStore $instance */
                         return $instance->getPrefix();
+        }
+                    /**
+         * Set the cache key prefix.
+         *
+         * @param string $prefix
+         * @return void 
+         * @static 
+         */        public static function setPrefix($prefix)
+        {
+                        /** @var \Illuminate\Cache\RedisStore $instance */
+                        $instance->setPrefix($prefix);
         }
             }
             /**
@@ -4644,91 +4675,6 @@ namespace Illuminate\Support\Facades {
             /**
      * 
      *
-     * @method static void useDefaultQueryGrammar()
-     * @method static void useDefaultSchemaGrammar()
-     * @method static void useDefaultPostProcessor()
-     * @method static \Illuminate\Database\Schema\Builder getSchemaBuilder()
-     * @method static \Illuminate\Database\Query\Builder table(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Contracts\Database\Query\Expression|string $table, string|null $as = null)
-     * @method static \Illuminate\Database\Query\Builder query()
-     * @method static mixed selectOne(string $query, array $bindings = [], bool $useReadPdo = true)
-     * @method static mixed scalar(string $query, array $bindings = [], bool $useReadPdo = true)
-     * @method static array selectFromWriteConnection(string $query, array $bindings = [])
-     * @method static array select(string $query, array $bindings = [], bool $useReadPdo = true)
-     * @method static array selectResultSets(string $query, array $bindings = [], bool $useReadPdo = true)
-     * @method static \Generator cursor(string $query, array $bindings = [], bool $useReadPdo = true)
-     * @method static bool insert(string $query, array $bindings = [])
-     * @method static int update(string $query, array $bindings = [])
-     * @method static int delete(string $query, array $bindings = [])
-     * @method static bool statement(string $query, array $bindings = [])
-     * @method static int affectingStatement(string $query, array $bindings = [])
-     * @method static bool unprepared(string $query)
-     * @method static array pretend(\Closure $callback)
-     * @method static mixed withoutPretending(\Closure $callback)
-     * @method static void bindValues(\PDOStatement $statement, array $bindings)
-     * @method static array prepareBindings(array $bindings)
-     * @method static void logQuery(string $query, array $bindings, float|null $time = null)
-     * @method static void whenQueryingForLongerThan(\DateTimeInterface|\Carbon\CarbonInterval|float|int $threshold, callable $handler)
-     * @method static void allowQueryDurationHandlersToRunAgain()
-     * @method static float totalQueryDuration()
-     * @method static void resetTotalQueryDuration()
-     * @method static void reconnectIfMissingConnection()
-     * @method static \Illuminate\Database\Connection beforeStartingTransaction(\Closure $callback)
-     * @method static \Illuminate\Database\Connection beforeExecuting(\Closure $callback)
-     * @method static void listen(\Closure $callback)
-     * @method static \Illuminate\Contracts\Database\Query\Expression raw(mixed $value)
-     * @method static string escape(string|float|int|bool|null $value, bool $binary = false)
-     * @method static bool hasModifiedRecords()
-     * @method static void recordsHaveBeenModified(bool $value = true)
-     * @method static \Illuminate\Database\Connection setRecordModificationState(bool $value)
-     * @method static void forgetRecordModificationState()
-     * @method static \Illuminate\Database\Connection useWriteConnectionWhenReading(bool $value = true)
-     * @method static bool isDoctrineAvailable()
-     * @method static bool usingNativeSchemaOperations()
-     * @method static \Doctrine\DBAL\Schema\Column getDoctrineColumn(string $table, string $column)
-     * @method static \Doctrine\DBAL\Schema\AbstractSchemaManager getDoctrineSchemaManager()
-     * @method static \Doctrine\DBAL\Connection getDoctrineConnection()
-     * @method static \PDO getPdo()
-     * @method static \PDO|\Closure|null getRawPdo()
-     * @method static \PDO getReadPdo()
-     * @method static \PDO|\Closure|null getRawReadPdo()
-     * @method static \Illuminate\Database\Connection setPdo(\PDO|\Closure|null $pdo)
-     * @method static \Illuminate\Database\Connection setReadPdo(\PDO|\Closure|null $pdo)
-     * @method static string|null getName()
-     * @method static string|null getNameWithReadWriteType()
-     * @method static mixed getConfig(string|null $option = null)
-     * @method static string getDriverName()
-     * @method static \Illuminate\Database\Query\Grammars\Grammar getQueryGrammar()
-     * @method static \Illuminate\Database\Connection setQueryGrammar(\Illuminate\Database\Query\Grammars\Grammar $grammar)
-     * @method static \Illuminate\Database\Schema\Grammars\Grammar getSchemaGrammar()
-     * @method static \Illuminate\Database\Connection setSchemaGrammar(\Illuminate\Database\Schema\Grammars\Grammar $grammar)
-     * @method static \Illuminate\Database\Query\Processors\Processor getPostProcessor()
-     * @method static \Illuminate\Database\Connection setPostProcessor(\Illuminate\Database\Query\Processors\Processor $processor)
-     * @method static \Illuminate\Contracts\Events\Dispatcher getEventDispatcher()
-     * @method static \Illuminate\Database\Connection setEventDispatcher(\Illuminate\Contracts\Events\Dispatcher $events)
-     * @method static void unsetEventDispatcher()
-     * @method static \Illuminate\Database\Connection setTransactionManager(\Illuminate\Database\DatabaseTransactionsManager $manager)
-     * @method static void unsetTransactionManager()
-     * @method static bool pretending()
-     * @method static array getQueryLog()
-     * @method static array getRawQueryLog()
-     * @method static void flushQueryLog()
-     * @method static void enableQueryLog()
-     * @method static void disableQueryLog()
-     * @method static bool logging()
-     * @method static string getDatabaseName()
-     * @method static \Illuminate\Database\Connection setDatabaseName(string $database)
-     * @method static \Illuminate\Database\Connection setReadWriteType(string|null $readWriteType)
-     * @method static string getTablePrefix()
-     * @method static \Illuminate\Database\Connection setTablePrefix(string $prefix)
-     * @method static \Illuminate\Database\Grammar withTablePrefix(\Illuminate\Database\Grammar $grammar)
-     * @method static void resolverFor(string $driver, \Closure $callback)
-     * @method static mixed getResolver(string $driver)
-     * @method static mixed transaction(\Closure $callback, int $attempts = 1)
-     * @method static void beginTransaction()
-     * @method static void commit()
-     * @method static void rollBack(int|null $toLevel = null)
-     * @method static int transactionLevel()
-     * @method static void afterCommit(callable $callback)
      * @see \Illuminate\Database\DatabaseManager
      */        class DB {
                     /**
@@ -4748,7 +4694,7 @@ namespace Illuminate\Support\Facades {
          * @param string $name
          * @param array $config
          * @param bool $force
-         * @return \Illuminate\Database\ConnectionInterface 
+         * @return \Illuminate\Database\PostgresConnection 
          * @static 
          */        public static function connectUsing($name, $config, $force = false)
         {
@@ -4965,6 +4911,942 @@ namespace Illuminate\Support\Facades {
         {
                         /** @var \Illuminate\Database\DatabaseManager $instance */
                         return $instance->macroCall($method, $parameters);
+        }
+                    /**
+         * Get a schema builder instance for the connection.
+         *
+         * @return \Illuminate\Database\Schema\PostgresBuilder 
+         * @static 
+         */        public static function getSchemaBuilder()
+        {
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getSchemaBuilder();
+        }
+                    /**
+         * Get the schema state for the connection.
+         *
+         * @param \Illuminate\Filesystem\Filesystem|null $files
+         * @param callable|null $processFactory
+         * @return \Illuminate\Database\Schema\PostgresSchemaState 
+         * @static 
+         */        public static function getSchemaState($files = null, $processFactory = null)
+        {
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getSchemaState($files, $processFactory);
+        }
+                    /**
+         * Set the query grammar to the default implementation.
+         *
+         * @return void 
+         * @static 
+         */        public static function useDefaultQueryGrammar()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->useDefaultQueryGrammar();
+        }
+                    /**
+         * Set the schema grammar to the default implementation.
+         *
+         * @return void 
+         * @static 
+         */        public static function useDefaultSchemaGrammar()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->useDefaultSchemaGrammar();
+        }
+                    /**
+         * Set the query post processor to the default implementation.
+         *
+         * @return void 
+         * @static 
+         */        public static function useDefaultPostProcessor()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->useDefaultPostProcessor();
+        }
+                    /**
+         * Begin a fluent query against a database table.
+         *
+         * @param \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Contracts\Database\Query\Expression|string $table
+         * @param string|null $as
+         * @return \Illuminate\Database\Query\Builder 
+         * @static 
+         */        public static function table($table, $as = null)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->table($table, $as);
+        }
+                    /**
+         * Get a new query builder instance.
+         *
+         * @return \Illuminate\Database\Query\Builder 
+         * @static 
+         */        public static function query()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->query();
+        }
+                    /**
+         * Run a select statement and return a single result.
+         *
+         * @param string $query
+         * @param array $bindings
+         * @param bool $useReadPdo
+         * @return mixed 
+         * @static 
+         */        public static function selectOne($query, $bindings = [], $useReadPdo = true)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->selectOne($query, $bindings, $useReadPdo);
+        }
+                    /**
+         * Run a select statement and return the first column of the first row.
+         *
+         * @param string $query
+         * @param array $bindings
+         * @param bool $useReadPdo
+         * @return mixed 
+         * @throws \Illuminate\Database\MultipleColumnsSelectedException
+         * @static 
+         */        public static function scalar($query, $bindings = [], $useReadPdo = true)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->scalar($query, $bindings, $useReadPdo);
+        }
+                    /**
+         * Run a select statement against the database.
+         *
+         * @param string $query
+         * @param array $bindings
+         * @return array 
+         * @static 
+         */        public static function selectFromWriteConnection($query, $bindings = [])
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->selectFromWriteConnection($query, $bindings);
+        }
+                    /**
+         * Run a select statement against the database.
+         *
+         * @param string $query
+         * @param array $bindings
+         * @param bool $useReadPdo
+         * @return array 
+         * @static 
+         */        public static function select($query, $bindings = [], $useReadPdo = true)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->select($query, $bindings, $useReadPdo);
+        }
+                    /**
+         * Run a select statement against the database and returns all of the result sets.
+         *
+         * @param string $query
+         * @param array $bindings
+         * @param bool $useReadPdo
+         * @return array 
+         * @static 
+         */        public static function selectResultSets($query, $bindings = [], $useReadPdo = true)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->selectResultSets($query, $bindings, $useReadPdo);
+        }
+                    /**
+         * Run a select statement against the database and returns a generator.
+         *
+         * @param string $query
+         * @param array $bindings
+         * @param bool $useReadPdo
+         * @return \Generator 
+         * @static 
+         */        public static function cursor($query, $bindings = [], $useReadPdo = true)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->cursor($query, $bindings, $useReadPdo);
+        }
+                    /**
+         * Run an insert statement against the database.
+         *
+         * @param string $query
+         * @param array $bindings
+         * @return bool 
+         * @static 
+         */        public static function insert($query, $bindings = [])
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->insert($query, $bindings);
+        }
+                    /**
+         * Run an update statement against the database.
+         *
+         * @param string $query
+         * @param array $bindings
+         * @return int 
+         * @static 
+         */        public static function update($query, $bindings = [])
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->update($query, $bindings);
+        }
+                    /**
+         * Run a delete statement against the database.
+         *
+         * @param string $query
+         * @param array $bindings
+         * @return int 
+         * @static 
+         */        public static function delete($query, $bindings = [])
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->delete($query, $bindings);
+        }
+                    /**
+         * Execute an SQL statement and return the boolean result.
+         *
+         * @param string $query
+         * @param array $bindings
+         * @return bool 
+         * @static 
+         */        public static function statement($query, $bindings = [])
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->statement($query, $bindings);
+        }
+                    /**
+         * Run an SQL statement and get the number of rows affected.
+         *
+         * @param string $query
+         * @param array $bindings
+         * @return int 
+         * @static 
+         */        public static function affectingStatement($query, $bindings = [])
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->affectingStatement($query, $bindings);
+        }
+                    /**
+         * Run a raw, unprepared query against the PDO connection.
+         *
+         * @param string $query
+         * @return bool 
+         * @static 
+         */        public static function unprepared($query)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->unprepared($query);
+        }
+                    /**
+         * Execute the given callback in "dry run" mode.
+         *
+         * @param \Closure $callback
+         * @return array 
+         * @static 
+         */        public static function pretend($callback)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->pretend($callback);
+        }
+                    /**
+         * Execute the given callback without "pretending".
+         *
+         * @param \Closure $callback
+         * @return mixed 
+         * @static 
+         */        public static function withoutPretending($callback)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->withoutPretending($callback);
+        }
+                    /**
+         * Bind values to their parameters in the given statement.
+         *
+         * @param \PDOStatement $statement
+         * @param array $bindings
+         * @return void 
+         * @static 
+         */        public static function bindValues($statement, $bindings)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->bindValues($statement, $bindings);
+        }
+                    /**
+         * Prepare the query bindings for execution.
+         *
+         * @param array $bindings
+         * @return array 
+         * @static 
+         */        public static function prepareBindings($bindings)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->prepareBindings($bindings);
+        }
+                    /**
+         * Log a query in the connection's query log.
+         *
+         * @param string $query
+         * @param array $bindings
+         * @param float|null $time
+         * @return void 
+         * @static 
+         */        public static function logQuery($query, $bindings, $time = null)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->logQuery($query, $bindings, $time);
+        }
+                    /**
+         * Register a callback to be invoked when the connection queries for longer than a given amount of time.
+         *
+         * @param \DateTimeInterface|\Carbon\CarbonInterval|float|int $threshold
+         * @param callable $handler
+         * @return void 
+         * @static 
+         */        public static function whenQueryingForLongerThan($threshold, $handler)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->whenQueryingForLongerThan($threshold, $handler);
+        }
+                    /**
+         * Allow all the query duration handlers to run again, even if they have already run.
+         *
+         * @return void 
+         * @static 
+         */        public static function allowQueryDurationHandlersToRunAgain()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->allowQueryDurationHandlersToRunAgain();
+        }
+                    /**
+         * Get the duration of all run queries in milliseconds.
+         *
+         * @return float 
+         * @static 
+         */        public static function totalQueryDuration()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->totalQueryDuration();
+        }
+                    /**
+         * Reset the duration of all run queries.
+         *
+         * @return void 
+         * @static 
+         */        public static function resetTotalQueryDuration()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->resetTotalQueryDuration();
+        }
+                    /**
+         * Reconnect to the database if a PDO connection is missing.
+         *
+         * @return void 
+         * @static 
+         */        public static function reconnectIfMissingConnection()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->reconnectIfMissingConnection();
+        }
+                    /**
+         * Register a hook to be run just before a database transaction is started.
+         *
+         * @param \Closure $callback
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function beforeStartingTransaction($callback)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->beforeStartingTransaction($callback);
+        }
+                    /**
+         * Register a hook to be run just before a database query is executed.
+         *
+         * @param \Closure $callback
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function beforeExecuting($callback)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->beforeExecuting($callback);
+        }
+                    /**
+         * Register a database query listener with the connection.
+         *
+         * @param \Closure $callback
+         * @return void 
+         * @static 
+         */        public static function listen($callback)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->listen($callback);
+        }
+                    /**
+         * Get a new raw query expression.
+         *
+         * @param mixed $value
+         * @return \Illuminate\Contracts\Database\Query\Expression 
+         * @static 
+         */        public static function raw($value)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->raw($value);
+        }
+                    /**
+         * Escape a value for safe SQL embedding.
+         *
+         * @param string|float|int|bool|null $value
+         * @param bool $binary
+         * @return string 
+         * @static 
+         */        public static function escape($value, $binary = false)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->escape($value, $binary);
+        }
+                    /**
+         * Determine if the database connection has modified any database records.
+         *
+         * @return bool 
+         * @static 
+         */        public static function hasModifiedRecords()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->hasModifiedRecords();
+        }
+                    /**
+         * Indicate if any records have been modified.
+         *
+         * @param bool $value
+         * @return void 
+         * @static 
+         */        public static function recordsHaveBeenModified($value = true)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->recordsHaveBeenModified($value);
+        }
+                    /**
+         * Set the record modification state.
+         *
+         * @param bool $value
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function setRecordModificationState($value)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->setRecordModificationState($value);
+        }
+                    /**
+         * Reset the record modification state.
+         *
+         * @return void 
+         * @static 
+         */        public static function forgetRecordModificationState()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->forgetRecordModificationState();
+        }
+                    /**
+         * Indicate that the connection should use the write PDO connection for reads.
+         *
+         * @param bool $value
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function useWriteConnectionWhenReading($value = true)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->useWriteConnectionWhenReading($value);
+        }
+                    /**
+         * Is Doctrine available?
+         *
+         * @return bool 
+         * @static 
+         */        public static function isDoctrineAvailable()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->isDoctrineAvailable();
+        }
+                    /**
+         * Indicates whether native alter operations will be used when dropping, renaming, or modifying columns, even if Doctrine DBAL is installed.
+         *
+         * @return bool 
+         * @static 
+         */        public static function usingNativeSchemaOperations()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->usingNativeSchemaOperations();
+        }
+                    /**
+         * Get a Doctrine Schema Column instance.
+         *
+         * @param string $table
+         * @param string $column
+         * @return \Doctrine\DBAL\Schema\Column 
+         * @static 
+         */        public static function getDoctrineColumn($table, $column)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getDoctrineColumn($table, $column);
+        }
+                    /**
+         * Get the Doctrine DBAL schema manager for the connection.
+         *
+         * @return \Doctrine\DBAL\Schema\AbstractSchemaManager 
+         * @static 
+         */        public static function getDoctrineSchemaManager()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getDoctrineSchemaManager();
+        }
+                    /**
+         * Get the Doctrine DBAL database connection instance.
+         *
+         * @return \Doctrine\DBAL\Connection 
+         * @static 
+         */        public static function getDoctrineConnection()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getDoctrineConnection();
+        }
+                    /**
+         * Get the current PDO connection.
+         *
+         * @return \PDO 
+         * @static 
+         */        public static function getPdo()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getPdo();
+        }
+                    /**
+         * Get the current PDO connection parameter without executing any reconnect logic.
+         *
+         * @return \PDO|\Closure|null 
+         * @static 
+         */        public static function getRawPdo()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getRawPdo();
+        }
+                    /**
+         * Get the current PDO connection used for reading.
+         *
+         * @return \PDO 
+         * @static 
+         */        public static function getReadPdo()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getReadPdo();
+        }
+                    /**
+         * Get the current read PDO connection parameter without executing any reconnect logic.
+         *
+         * @return \PDO|\Closure|null 
+         * @static 
+         */        public static function getRawReadPdo()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getRawReadPdo();
+        }
+                    /**
+         * Set the PDO connection.
+         *
+         * @param \PDO|\Closure|null $pdo
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function setPdo($pdo)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->setPdo($pdo);
+        }
+                    /**
+         * Set the PDO connection used for reading.
+         *
+         * @param \PDO|\Closure|null $pdo
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function setReadPdo($pdo)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->setReadPdo($pdo);
+        }
+                    /**
+         * Get the database connection name.
+         *
+         * @return string|null 
+         * @static 
+         */        public static function getName()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getName();
+        }
+                    /**
+         * Get the database connection full name.
+         *
+         * @return string|null 
+         * @static 
+         */        public static function getNameWithReadWriteType()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getNameWithReadWriteType();
+        }
+                    /**
+         * Get an option from the configuration options.
+         *
+         * @param string|null $option
+         * @return mixed 
+         * @static 
+         */        public static function getConfig($option = null)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getConfig($option);
+        }
+                    /**
+         * Get the PDO driver name.
+         *
+         * @return string 
+         * @static 
+         */        public static function getDriverName()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getDriverName();
+        }
+                    /**
+         * Get the query grammar used by the connection.
+         *
+         * @return \Illuminate\Database\Query\Grammars\Grammar 
+         * @static 
+         */        public static function getQueryGrammar()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getQueryGrammar();
+        }
+                    /**
+         * Set the query grammar used by the connection.
+         *
+         * @param \Illuminate\Database\Query\Grammars\Grammar $grammar
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function setQueryGrammar($grammar)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->setQueryGrammar($grammar);
+        }
+                    /**
+         * Get the schema grammar used by the connection.
+         *
+         * @return \Illuminate\Database\Schema\Grammars\Grammar 
+         * @static 
+         */        public static function getSchemaGrammar()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getSchemaGrammar();
+        }
+                    /**
+         * Set the schema grammar used by the connection.
+         *
+         * @param \Illuminate\Database\Schema\Grammars\Grammar $grammar
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function setSchemaGrammar($grammar)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->setSchemaGrammar($grammar);
+        }
+                    /**
+         * Get the query post processor used by the connection.
+         *
+         * @return \Illuminate\Database\Query\Processors\Processor 
+         * @static 
+         */        public static function getPostProcessor()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getPostProcessor();
+        }
+                    /**
+         * Set the query post processor used by the connection.
+         *
+         * @param \Illuminate\Database\Query\Processors\Processor $processor
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function setPostProcessor($processor)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->setPostProcessor($processor);
+        }
+                    /**
+         * Get the event dispatcher used by the connection.
+         *
+         * @return \Illuminate\Contracts\Events\Dispatcher 
+         * @static 
+         */        public static function getEventDispatcher()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getEventDispatcher();
+        }
+                    /**
+         * Set the event dispatcher instance on the connection.
+         *
+         * @param \Illuminate\Contracts\Events\Dispatcher $events
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function setEventDispatcher($events)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->setEventDispatcher($events);
+        }
+                    /**
+         * Unset the event dispatcher for this connection.
+         *
+         * @return void 
+         * @static 
+         */        public static function unsetEventDispatcher()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->unsetEventDispatcher();
+        }
+                    /**
+         * Set the transaction manager instance on the connection.
+         *
+         * @param \Illuminate\Database\DatabaseTransactionsManager $manager
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function setTransactionManager($manager)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->setTransactionManager($manager);
+        }
+                    /**
+         * Unset the transaction manager for this connection.
+         *
+         * @return void 
+         * @static 
+         */        public static function unsetTransactionManager()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->unsetTransactionManager();
+        }
+                    /**
+         * Determine if the connection is in a "dry run".
+         *
+         * @return bool 
+         * @static 
+         */        public static function pretending()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->pretending();
+        }
+                    /**
+         * Get the connection query log.
+         *
+         * @return array 
+         * @static 
+         */        public static function getQueryLog()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getQueryLog();
+        }
+                    /**
+         * Get the connection query log with embedded bindings.
+         *
+         * @return array 
+         * @static 
+         */        public static function getRawQueryLog()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getRawQueryLog();
+        }
+                    /**
+         * Clear the query log.
+         *
+         * @return void 
+         * @static 
+         */        public static function flushQueryLog()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->flushQueryLog();
+        }
+                    /**
+         * Enable the query log on the connection.
+         *
+         * @return void 
+         * @static 
+         */        public static function enableQueryLog()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->enableQueryLog();
+        }
+                    /**
+         * Disable the query log on the connection.
+         *
+         * @return void 
+         * @static 
+         */        public static function disableQueryLog()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->disableQueryLog();
+        }
+                    /**
+         * Determine whether we're logging queries.
+         *
+         * @return bool 
+         * @static 
+         */        public static function logging()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->logging();
+        }
+                    /**
+         * Get the name of the connected database.
+         *
+         * @return string 
+         * @static 
+         */        public static function getDatabaseName()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getDatabaseName();
+        }
+                    /**
+         * Set the name of the connected database.
+         *
+         * @param string $database
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function setDatabaseName($database)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->setDatabaseName($database);
+        }
+                    /**
+         * Set the read / write type of the connection.
+         *
+         * @param string|null $readWriteType
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function setReadWriteType($readWriteType)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->setReadWriteType($readWriteType);
+        }
+                    /**
+         * Get the table prefix for the connection.
+         *
+         * @return string 
+         * @static 
+         */        public static function getTablePrefix()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->getTablePrefix();
+        }
+                    /**
+         * Set the table prefix in use by the connection.
+         *
+         * @param string $prefix
+         * @return \Illuminate\Database\PostgresConnection 
+         * @static 
+         */        public static function setTablePrefix($prefix)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->setTablePrefix($prefix);
+        }
+                    /**
+         * Set the table prefix and return the grammar.
+         *
+         * @param \Illuminate\Database\Grammar $grammar
+         * @return \Illuminate\Database\Grammar 
+         * @static 
+         */        public static function withTablePrefix($grammar)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->withTablePrefix($grammar);
+        }
+                    /**
+         * Register a connection resolver.
+         *
+         * @param string $driver
+         * @param \Closure $callback
+         * @return void 
+         * @static 
+         */        public static function resolverFor($driver, $callback)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        \Illuminate\Database\PostgresConnection::resolverFor($driver, $callback);
+        }
+                    /**
+         * Get the connection resolver for the given driver.
+         *
+         * @param string $driver
+         * @return mixed 
+         * @static 
+         */        public static function getResolver($driver)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        return \Illuminate\Database\PostgresConnection::getResolver($driver);
+        }
+                    /**
+         * Execute a Closure within a transaction.
+         *
+         * @param \Closure $callback
+         * @param int $attempts
+         * @return mixed 
+         * @throws \Throwable
+         * @static 
+         */        public static function transaction($callback, $attempts = 1)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->transaction($callback, $attempts);
+        }
+                    /**
+         * Start a new database transaction.
+         *
+         * @return void 
+         * @throws \Throwable
+         * @static 
+         */        public static function beginTransaction()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->beginTransaction();
+        }
+                    /**
+         * Commit the active database transaction.
+         *
+         * @return void 
+         * @throws \Throwable
+         * @static 
+         */        public static function commit()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->commit();
+        }
+                    /**
+         * Rollback the active database transaction.
+         *
+         * @param int|null $toLevel
+         * @return void 
+         * @throws \Throwable
+         * @static 
+         */        public static function rollBack($toLevel = null)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->rollBack($toLevel);
+        }
+                    /**
+         * Get the number of active transactions.
+         *
+         * @return int 
+         * @static 
+         */        public static function transactionLevel()
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        return $instance->transactionLevel();
+        }
+                    /**
+         * Execute the callback after a transaction commits.
+         *
+         * @param callable $callback
+         * @return void 
+         * @throws \RuntimeException
+         * @static 
+         */        public static function afterCommit($callback)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\PostgresConnection $instance */
+                        $instance->afterCommit($callback);
         }
             }
             /**
@@ -8865,6 +9747,86 @@ namespace Illuminate\Support\Facades {
                         return $instance->setConnectionName($name);
         }
                     /**
+         * Migrate the delayed jobs that are ready to the regular queue.
+         *
+         * @param string $from
+         * @param string $to
+         * @param int $limit
+         * @return array 
+         * @static 
+         */        public static function migrateExpiredJobs($from, $to)
+        {
+                        /** @var \Illuminate\Queue\RedisQueue $instance */
+                        return $instance->migrateExpiredJobs($from, $to);
+        }
+                    /**
+         * Delete a reserved job from the queue.
+         *
+         * @param string $queue
+         * @param \Illuminate\Queue\Jobs\RedisJob $job
+         * @return void 
+         * @static 
+         */        public static function deleteReserved($queue, $job)
+        {
+                        /** @var \Illuminate\Queue\RedisQueue $instance */
+                        $instance->deleteReserved($queue, $job);
+        }
+                    /**
+         * Delete a reserved job from the reserved queue and release it.
+         *
+         * @param string $queue
+         * @param \Illuminate\Queue\Jobs\RedisJob $job
+         * @param int $delay
+         * @return void 
+         * @static 
+         */        public static function deleteAndRelease($queue, $job, $delay)
+        {
+                        /** @var \Illuminate\Queue\RedisQueue $instance */
+                        $instance->deleteAndRelease($queue, $job, $delay);
+        }
+                    /**
+         * Delete all of the jobs from the queue.
+         *
+         * @param string $queue
+         * @return int 
+         * @static 
+         */        public static function clear($queue)
+        {
+                        /** @var \Illuminate\Queue\RedisQueue $instance */
+                        return $instance->clear($queue);
+        }
+                    /**
+         * Get the queue or return the default.
+         *
+         * @param string|null $queue
+         * @return string 
+         * @static 
+         */        public static function getQueue($queue)
+        {
+                        /** @var \Illuminate\Queue\RedisQueue $instance */
+                        return $instance->getQueue($queue);
+        }
+                    /**
+         * Get the connection for the queue.
+         *
+         * @return \Illuminate\Redis\Connections\Connection 
+         * @static 
+         */        public static function getConnection()
+        {
+                        /** @var \Illuminate\Queue\RedisQueue $instance */
+                        return $instance->getConnection();
+        }
+                    /**
+         * Get the underlying Redis instance.
+         *
+         * @return \Illuminate\Contracts\Redis\Factory 
+         * @static 
+         */        public static function getRedis()
+        {
+                        /** @var \Illuminate\Queue\RedisQueue $instance */
+                        return $instance->getRedis();
+        }
+                    /**
          * Get the maximum number of attempts for an object-based queue handler.
          *
          * @param mixed $job
@@ -8872,7 +9834,7 @@ namespace Illuminate\Support\Facades {
          * @static 
          */        public static function getJobTries($job)
         {            //Method inherited from \Illuminate\Queue\Queue         
-                        /** @var \Illuminate\Queue\SyncQueue $instance */
+                        /** @var \Illuminate\Queue\RedisQueue $instance */
                         return $instance->getJobTries($job);
         }
                     /**
@@ -8883,7 +9845,7 @@ namespace Illuminate\Support\Facades {
          * @static 
          */        public static function getJobBackoff($job)
         {            //Method inherited from \Illuminate\Queue\Queue         
-                        /** @var \Illuminate\Queue\SyncQueue $instance */
+                        /** @var \Illuminate\Queue\RedisQueue $instance */
                         return $instance->getJobBackoff($job);
         }
                     /**
@@ -8894,7 +9856,7 @@ namespace Illuminate\Support\Facades {
          * @static 
          */        public static function getJobExpiration($job)
         {            //Method inherited from \Illuminate\Queue\Queue         
-                        /** @var \Illuminate\Queue\SyncQueue $instance */
+                        /** @var \Illuminate\Queue\RedisQueue $instance */
                         return $instance->getJobExpiration($job);
         }
                     /**
@@ -8905,7 +9867,7 @@ namespace Illuminate\Support\Facades {
          * @static 
          */        public static function createPayloadUsing($callback)
         {            //Method inherited from \Illuminate\Queue\Queue         
-                        \Illuminate\Queue\SyncQueue::createPayloadUsing($callback);
+                        \Illuminate\Queue\RedisQueue::createPayloadUsing($callback);
         }
                     /**
          * Get the container instance being used by the connection.
@@ -8914,7 +9876,7 @@ namespace Illuminate\Support\Facades {
          * @static 
          */        public static function getContainer()
         {            //Method inherited from \Illuminate\Queue\Queue         
-                        /** @var \Illuminate\Queue\SyncQueue $instance */
+                        /** @var \Illuminate\Queue\RedisQueue $instance */
                         return $instance->getContainer();
         }
                     /**
@@ -8925,7 +9887,7 @@ namespace Illuminate\Support\Facades {
          * @static 
          */        public static function setContainer($container)
         {            //Method inherited from \Illuminate\Queue\Queue         
-                        /** @var \Illuminate\Queue\SyncQueue $instance */
+                        /** @var \Illuminate\Queue\RedisQueue $instance */
                         $instance->setContainer($container);
         }
             }
@@ -12569,6 +13531,514 @@ namespace Illuminate\Support\Facades {
         {
                         /** @var \Illuminate\Routing\Router $instance */
                         return $instance->macroCall($method, $parameters);
+        }
+            }
+            /**
+     * 
+     *
+     * @see \Illuminate\Database\Schema\Builder
+     */        class Schema {
+                    /**
+         * Create a database in the schema.
+         *
+         * @param string $name
+         * @return bool 
+         * @static 
+         */        public static function createDatabase($name)
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->createDatabase($name);
+        }
+                    /**
+         * Drop a database from the schema if the database exists.
+         *
+         * @param string $name
+         * @return bool 
+         * @static 
+         */        public static function dropDatabaseIfExists($name)
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->dropDatabaseIfExists($name);
+        }
+                    /**
+         * Determine if the given table exists.
+         *
+         * @param string $table
+         * @return bool 
+         * @static 
+         */        public static function hasTable($table)
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->hasTable($table);
+        }
+                    /**
+         * Get the user-defined types that belong to the database.
+         *
+         * @return array 
+         * @static 
+         */        public static function getTypes()
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getTypes();
+        }
+                    /**
+         * Get all of the table names for the database.
+         *
+         * @deprecated Will be removed in a future Laravel version.
+         * @return array 
+         * @static 
+         */        public static function getAllTables()
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getAllTables();
+        }
+                    /**
+         * Get all of the view names for the database.
+         *
+         * @deprecated Will be removed in a future Laravel version.
+         * @return array 
+         * @static 
+         */        public static function getAllViews()
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getAllViews();
+        }
+                    /**
+         * Drop all tables from the database.
+         *
+         * @return void 
+         * @static 
+         */        public static function dropAllTables()
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->dropAllTables();
+        }
+                    /**
+         * Drop all views from the database.
+         *
+         * @return void 
+         * @static 
+         */        public static function dropAllViews()
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->dropAllViews();
+        }
+                    /**
+         * Get all of the type names for the database.
+         *
+         * @deprecated Will be removed in a future Laravel version.
+         * @return array 
+         * @static 
+         */        public static function getAllTypes()
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getAllTypes();
+        }
+                    /**
+         * Drop all types from the database.
+         *
+         * @return void 
+         * @static 
+         */        public static function dropAllTypes()
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->dropAllTypes();
+        }
+                    /**
+         * Get the columns for a given table.
+         *
+         * @param string $table
+         * @return array 
+         * @static 
+         */        public static function getColumns($table)
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getColumns($table);
+        }
+                    /**
+         * Get the indexes for a given table.
+         *
+         * @param string $table
+         * @return array 
+         * @static 
+         */        public static function getIndexes($table)
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getIndexes($table);
+        }
+                    /**
+         * Get the foreign keys for a given table.
+         *
+         * @param string $table
+         * @return array 
+         * @static 
+         */        public static function getForeignKeys($table)
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getForeignKeys($table);
+        }
+                    /**
+         * Set the default string length for migrations.
+         *
+         * @param int $length
+         * @return void 
+         * @static 
+         */        public static function defaultStringLength($length)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        \Illuminate\Database\Schema\PostgresBuilder::defaultStringLength($length);
+        }
+                    /**
+         * Set the default morph key type for migrations.
+         *
+         * @param string $type
+         * @return void 
+         * @throws \InvalidArgumentException
+         * @static 
+         */        public static function defaultMorphKeyType($type)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        \Illuminate\Database\Schema\PostgresBuilder::defaultMorphKeyType($type);
+        }
+                    /**
+         * Set the default morph key type for migrations to UUIDs.
+         *
+         * @return void 
+         * @static 
+         */        public static function morphUsingUuids()
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        \Illuminate\Database\Schema\PostgresBuilder::morphUsingUuids();
+        }
+                    /**
+         * Set the default morph key type for migrations to ULIDs.
+         *
+         * @return void 
+         * @static 
+         */        public static function morphUsingUlids()
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        \Illuminate\Database\Schema\PostgresBuilder::morphUsingUlids();
+        }
+                    /**
+         * Attempt to use native schema operations for dropping, renaming, and modifying columns, even if Doctrine DBAL is installed.
+         *
+         * @param bool $value
+         * @return void 
+         * @static 
+         */        public static function useNativeSchemaOperationsIfPossible($value = true)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        \Illuminate\Database\Schema\PostgresBuilder::useNativeSchemaOperationsIfPossible($value);
+        }
+                    /**
+         * Determine if the given view exists.
+         *
+         * @param string $view
+         * @return bool 
+         * @static 
+         */        public static function hasView($view)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->hasView($view);
+        }
+                    /**
+         * Get the tables that belong to the database.
+         *
+         * @return array 
+         * @static 
+         */        public static function getTables()
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getTables();
+        }
+                    /**
+         * Get the names of the tables that belong to the database.
+         *
+         * @return array 
+         * @static 
+         */        public static function getTableListing()
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getTableListing();
+        }
+                    /**
+         * Get the views that belong to the database.
+         *
+         * @return array 
+         * @static 
+         */        public static function getViews()
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getViews();
+        }
+                    /**
+         * Determine if the given table has a given column.
+         *
+         * @param string $table
+         * @param string $column
+         * @return bool 
+         * @static 
+         */        public static function hasColumn($table, $column)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->hasColumn($table, $column);
+        }
+                    /**
+         * Determine if the given table has given columns.
+         *
+         * @param string $table
+         * @param array $columns
+         * @return bool 
+         * @static 
+         */        public static function hasColumns($table, $columns)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->hasColumns($table, $columns);
+        }
+                    /**
+         * Execute a table builder callback if the given table has a given column.
+         *
+         * @param string $table
+         * @param string $column
+         * @param \Closure $callback
+         * @return void 
+         * @static 
+         */        public static function whenTableHasColumn($table, $column, $callback)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->whenTableHasColumn($table, $column, $callback);
+        }
+                    /**
+         * Execute a table builder callback if the given table doesn't have a given column.
+         *
+         * @param string $table
+         * @param string $column
+         * @param \Closure $callback
+         * @return void 
+         * @static 
+         */        public static function whenTableDoesntHaveColumn($table, $column, $callback)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->whenTableDoesntHaveColumn($table, $column, $callback);
+        }
+                    /**
+         * Get the data type for the given column name.
+         *
+         * @param string $table
+         * @param string $column
+         * @param bool $fullDefinition
+         * @return string 
+         * @static 
+         */        public static function getColumnType($table, $column, $fullDefinition = false)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getColumnType($table, $column, $fullDefinition);
+        }
+                    /**
+         * Get the column listing for a given table.
+         *
+         * @param string $table
+         * @return array 
+         * @static 
+         */        public static function getColumnListing($table)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getColumnListing($table);
+        }
+                    /**
+         * Get the names of the indexes for a given table.
+         *
+         * @param string $table
+         * @return array 
+         * @static 
+         */        public static function getIndexListing($table)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getIndexListing($table);
+        }
+                    /**
+         * Determine if the given table has a given index.
+         *
+         * @param string $table
+         * @param string|array $index
+         * @param string|null $type
+         * @return bool 
+         * @static 
+         */        public static function hasIndex($table, $index, $type = null)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->hasIndex($table, $index, $type);
+        }
+                    /**
+         * Modify a table on the schema.
+         *
+         * @param string $table
+         * @param \Closure $callback
+         * @return void 
+         * @static 
+         */        public static function table($table, $callback)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->table($table, $callback);
+        }
+                    /**
+         * Create a new table on the schema.
+         *
+         * @param string $table
+         * @param \Closure $callback
+         * @return void 
+         * @static 
+         */        public static function create($table, $callback)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->create($table, $callback);
+        }
+                    /**
+         * Drop a table from the schema.
+         *
+         * @param string $table
+         * @return void 
+         * @static 
+         */        public static function drop($table)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->drop($table);
+        }
+                    /**
+         * Drop a table from the schema if it exists.
+         *
+         * @param string $table
+         * @return void 
+         * @static 
+         */        public static function dropIfExists($table)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->dropIfExists($table);
+        }
+                    /**
+         * Drop columns from a table schema.
+         *
+         * @param string $table
+         * @param string|array $columns
+         * @return void 
+         * @static 
+         */        public static function dropColumns($table, $columns)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->dropColumns($table, $columns);
+        }
+                    /**
+         * Rename a table on the schema.
+         *
+         * @param string $from
+         * @param string $to
+         * @return void 
+         * @static 
+         */        public static function rename($from, $to)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->rename($from, $to);
+        }
+                    /**
+         * Enable foreign key constraints.
+         *
+         * @return bool 
+         * @static 
+         */        public static function enableForeignKeyConstraints()
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->enableForeignKeyConstraints();
+        }
+                    /**
+         * Disable foreign key constraints.
+         *
+         * @return bool 
+         * @static 
+         */        public static function disableForeignKeyConstraints()
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->disableForeignKeyConstraints();
+        }
+                    /**
+         * Disable foreign key constraints during the execution of a callback.
+         *
+         * @param \Closure $callback
+         * @return mixed 
+         * @static 
+         */        public static function withoutForeignKeyConstraints($callback)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->withoutForeignKeyConstraints($callback);
+        }
+                    /**
+         * Get the database connection instance.
+         *
+         * @return \Illuminate\Database\Connection 
+         * @static 
+         */        public static function getConnection()
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->getConnection();
+        }
+                    /**
+         * Set the database connection instance.
+         *
+         * @param \Illuminate\Database\Connection $connection
+         * @return \Illuminate\Database\Schema\PostgresBuilder 
+         * @static 
+         */        public static function setConnection($connection)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->setConnection($connection);
+        }
+                    /**
+         * Set the Schema Blueprint resolver callback.
+         *
+         * @param \Closure $resolver
+         * @return void 
+         * @static 
+         */        public static function blueprintResolver($resolver)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->blueprintResolver($resolver);
+        }
+                    /**
+         * Register a custom macro.
+         *
+         * @param string $name
+         * @param object|callable $macro
+         * @return void 
+         * @static 
+         */        public static function macro($name, $macro)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        \Illuminate\Database\Schema\PostgresBuilder::macro($name, $macro);
+        }
+                    /**
+         * Mix another object into the class.
+         *
+         * @param object $mixin
+         * @param bool $replace
+         * @return void 
+         * @throws \ReflectionException
+         * @static 
+         */        public static function mixin($mixin, $replace = true)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        \Illuminate\Database\Schema\PostgresBuilder::mixin($mixin, $replace);
+        }
+                    /**
+         * Checks if macro is registered.
+         *
+         * @param string $name
+         * @return bool 
+         * @static 
+         */        public static function hasMacro($name)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        return \Illuminate\Database\Schema\PostgresBuilder::hasMacro($name);
+        }
+                    /**
+         * Flush the existing macros.
+         *
+         * @return void 
+         * @static 
+         */        public static function flushMacros()
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        \Illuminate\Database\Schema\PostgresBuilder::flushMacros();
         }
             }
             /**
@@ -20265,6 +21735,7 @@ namespace  {
             class Request extends \Illuminate\Support\Facades\Request {}
             class Response extends \Illuminate\Support\Facades\Response {}
             class Route extends \Illuminate\Support\Facades\Route {}
+            class Schema extends \Illuminate\Support\Facades\Schema {}
             class Session extends \Illuminate\Support\Facades\Session {}
             class Storage extends \Illuminate\Support\Facades\Storage {}
             class Str extends \Illuminate\Support\Str {}
