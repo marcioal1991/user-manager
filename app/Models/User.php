@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
@@ -57,7 +57,7 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, SoftDeletes;
 
     protected $table = 'user';
     protected $primaryKey = 'user_id';
@@ -98,5 +98,11 @@ class User extends Authenticatable
     public function isSuperAdmin(): bool
     {
         return $this->getAttribute('superadmin');
+    }
+
+
+    protected static function newFactory($count = null, $state = []): UserFactory
+    {
+        return UserFactory::new();
     }
 }

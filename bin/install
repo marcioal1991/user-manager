@@ -12,7 +12,7 @@ sudo chmod -R 777 ${PWD}/storage/
 docker exec -it php_fpm bash -c "composer install && php artisan key:generate"
 docker exec -it php_fpm bash -c "php artisan migrate"
 docker exec -it php_fpm bash -c "php artisan app:create-super-admin-user"
-
+docker exec -it php_fpm bash -c "php artisan db:seed"
 #docker compose stop
 
 echo "Setup configured successfully."
