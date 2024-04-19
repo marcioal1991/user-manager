@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\User;
 
+use App\DTO\UserDTO;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -53,23 +54,35 @@ class UpdateUserRequest extends FormRequest
         ];
     }
 
-    public function getFirstName(): \Stringable
+    public function getFirstName(): string
     {
-        return $this->string('first_name');
+        return $this->string('first_name')->toString();
     }
 
-    public function getLastName(): \Stringable
+    public function getLastName(): string
     {
-        return $this->string('last_name');
+        return $this->string('last_name')->toString();
     }
 
-    public function getMobileNumber(): ?\Stringable
+    public function getMobileNumber(): ?string
     {
-        return $this->string('mobile');
+        return $this->string('mobile')?->toString();
     }
 
-    public function getEmail(): ?\Stringable
+    public function getEmail(): ?string
     {
-        return $this->string('email');
+        return $this->string('email')->toString();
+    }
+
+    public function getUserDTO(): UserDTO
+    {
+        $dto = new UserDTO();
+
+        $dto->email = $this->getEmail();
+        $dto->mobile = $this->getMobileNumber();
+        $dto->first_name = $this->getFirstName();
+        $dto->last_name = $this->getLastName();
+
+        return $dto;
     }
 }

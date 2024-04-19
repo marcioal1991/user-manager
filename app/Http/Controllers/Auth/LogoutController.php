@@ -10,8 +10,12 @@ class LogoutController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): \Illuminate\Http\Response
     {
-        //
+        $request->user()->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return \Response::noContent();
     }
 }
