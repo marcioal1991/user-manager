@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserLastLoggedIn
+class EnsureLastActionUpdate
 {
     /**
      * Handle an incoming request.
@@ -17,7 +17,7 @@ class EnsureUserLastLoggedIn
     public function handle(Request $request, Closure $next): Response
     {
         $user = \Auth::user();
-        $user->last_logged_in = Carbon::now();
+        $user->last_action_at = Carbon::now();
         $user->save();
 
         return $next($request);
