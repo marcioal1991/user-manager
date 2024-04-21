@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\User\UserResource;
 use App\Models\User;
-use App\Services\UserService;
+use App\Services\UserRepository;
 
 class UpdateUserController extends Controller
 {
@@ -16,9 +16,9 @@ class UpdateUserController extends Controller
      * Handle the incoming request.
      * @throws \Throwable
      */
-    public function __invoke(User $user, UpdateUserRequest $request, UserService $userService): UserResource
+    public function __invoke(User $user, UpdateUserRequest $request, UserRepository $userRepository): UserResource
     {
-        $user = \DB::transaction(fn (): User => $userService->update($request->getUserDTO(), $user));
+        $user = \DB::transaction(fn (): User => $userRepository->update($request->getUserDTO(), $user));
 
         return UserResource::make($user);
     }

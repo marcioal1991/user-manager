@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Models\User;
+use App\DTO\UserDTO;
+use App\Services\UserRepository;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Console\Command;
@@ -21,21 +22,22 @@ class CreateSuperAdminUser extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    public function handle(UserRepository $repository): void
     {
 
         $this->components->alert('Create a new administrator user');
 
-        $user = new User();
-        $user->first_name = $this->askFirstName();
-        $user->last_name = $this->askLastName();
-        $user->mobile = $this->askMobileNumber();
-        $user->date_of_birth = $this->askDateOfBirth();
-        $user->username = $this->askUsername();
-        $user->password = $this->askPassword();
-        $user->email = $this->askEmail();
-        $user->superadmin = true;
+        $dto = new UserDTO();
+        $dto->first_name = $this->askFirstName();
+        $dto->last_name = $this->askLastName();
+        $dto->mobile = $this->askMobileNumber();
+        $dto->date_of_birth = $this->askDateOfBirth();
+        $dto->username = $this->askUsername();
+        $dto->password = $this->askPassword();
+        $dto->email = $this->askEmail();
+        $dto->superadmin = true;
 
+        $user = $repository->create($dto);
         $user->save();
 
         $this->components->task('User created successfully.');

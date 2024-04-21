@@ -54,22 +54,22 @@ class UpdateUserRequest extends FormRequest
         ];
     }
 
-    public function getFirstName(): string
+    protected function getFirstName(): string
     {
         return $this->string('first_name')->toString();
     }
 
-    public function getLastName(): string
+    protected function getLastName(): string
     {
         return $this->string('last_name')->toString();
     }
 
-    public function getMobileNumber(): ?string
+    protected function getMobileNumber(): ?string
     {
         return $this->string('mobile')?->toString();
     }
 
-    public function getEmail(): ?string
+    protected function getEmail(): ?string
     {
         return $this->string('email')->toString();
     }

@@ -14,7 +14,7 @@ class ShowUserController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(ShowUserRequest $request, User $user): UserResource
+    public function __invoke(User $user, ShowUserRequest $request): UserResource
     {
         return UserResource::make($user);
     }

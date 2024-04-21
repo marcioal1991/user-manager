@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\User;
 
+use App\DTO\UserListDTO;
+use App\Http\Requests\Rules\OrderDirection;
+use App\Http\Requests\Rules\UserListOrder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ListUserRequest extends FormRequest
 {
@@ -24,15 +28,16 @@ class ListUserRequest extends FormRequest
                 'string',
                 'max:255',
             ],
-            'order' => [
-
+            'order_by' => [
+                'nullable',
+                Rule::enum(UserListOrder::class),
             ],
             'page' => [
                 'nullable',
                 'integer',
                 'min:1',
             ],
-            'rows_per_page' => [
+            'size' => [
                 'nullable',
                 'integer',
                 'min:10',
@@ -41,23 +46,41 @@ class ListUserRequest extends FormRequest
         ];
     }
 
-    public function rowsPerPage(): int
+    protected function size(): int
     {
-        return $this->integer('rows_per_page', 25);
+        return $this->integer('size', 25);
     }
 
-    public function page(): int
+    protected function page(): int
     {
         return $this->integer('page', 1);
     }
 
-    public function search(): ?string
+    protected function search(): ?string
     {
         return $this->string('search')->toString();
     }
 
-    public function order(): string
+    protected function orderBy(): ?UserListOrder
     {
-        return $this->string('order', '')->toString();
+        return $this->enum('order_by', UserListOrder::class);
+    }
+
+    protected function orderDirection(): ?OrderDirection
+    {
+        return $this->enum('order_direction', OrderDirection::class);
+    }
+
+    public function getDTO(): UserListDTO
+    {
+        $dto = new UserListDTO();
+
+        $dto->size = $this->size();
+        $dto->orderBy = $this->orderBy();
+        $dto->orderDirection = $this->orderDirection();
+        $dto->page = $this->page();
+        $dto->search = $this->search();
+
+        return $dto;
     }
 }

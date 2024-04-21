@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -19,21 +21,20 @@ class LoginRequest extends FormRequest
                 'string',
                 'max:255',
             ],
-            'password' => [
+            'password' =>
                 'required',
                 'string',
                 'max:255',
-            ],
         ];
     }
 
     public function username(): string
     {
-        return $this->string('username');
+        return $this->string('username')->toString();
     }
 
     public function password(): string
     {
-        return $this->string('password');
+        return $this->string('password')->toString();
     }
 }

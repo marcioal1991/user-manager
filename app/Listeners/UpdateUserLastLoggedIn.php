@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners;
 
 use Carbon\Carbon;
@@ -7,7 +9,7 @@ use Illuminate\Auth\Events\Login;
 
 readonly class UpdateUserLastLoggedIn
 {
-    public function __construct(protected Login $event)
+    public function __construct()
     {
 
     }
