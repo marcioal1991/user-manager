@@ -79,9 +79,9 @@ class CreateSuperAdminUser extends Command
         ) ?: null;
     }
 
-    protected function askDateOfBirth(): ?string
+    protected function askDateOfBirth(): ?Carbon
     {
-        return text(
+        $result = text(
             'Type your date of birth.',
             'E.g. 04/10/1991',
             '',
@@ -94,7 +94,13 @@ class CreateSuperAdminUser extends Command
                     return 'Type a valid date format (as mm/dd/yyyy)';
                 }
             }
-        ) ?: null;
+        );
+
+        if ($result === '') {
+            return null;
+        }
+
+        return Carbon::createFromFormat('m/d/Y', $result);
     }
 
     protected function askUsername(): string
