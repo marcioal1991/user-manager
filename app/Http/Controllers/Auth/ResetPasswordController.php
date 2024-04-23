@@ -18,7 +18,7 @@ class ResetPasswordController extends Controller
     public function __invoke(ResetPasswordRequest $request): \Illuminate\Http\JsonResponse
     {
         $status = \Password::reset([
-            'email' => $request->getUsername(),
+            'email' => $request->getEmail(),
             'password' => $request->getUserPassword(),
             'password_confirmation' => $request->getConfirmUserPassword(),
             'token' => $request->getToken(),

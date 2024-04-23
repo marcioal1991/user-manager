@@ -47,6 +47,18 @@ services:
         networks:
             cfp-energy:
                 ipv4_address: ${DB_HOST}
+    react:
+        image: "node:18-alpine"
+        container_name: react_app
+        working_dir: /srv/app
+        volumes:
+            - ${PWD}/frontend-app:/srv/app/
+        ports:
+            - '3000:3000'
+        entrypoint: /bin/sh -c "npm --ignore-scripts install && npm --ignore-scripts start"
+        networks:
+            cfp-energy:
+                ipv4_address: ${REACT_APP_HOST}
 networks:
     cfp-energy:
         driver: bridge

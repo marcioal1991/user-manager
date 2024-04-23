@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,7 +23,7 @@ class UserFactory extends Factory
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
             'mobile' => fake()->e164PhoneNumber(),
-            'username' => fake()->userName(),
+            'username' => fake()->unique()->userName(),
             'superadmin' => fake()->boolean(2),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),

@@ -21,8 +21,7 @@ class UserPolicy extends BasePolicy
      */
     public function view(User $user, User $model): bool
     {
-        return !($model->isSuperAdmin() && !$user->isSuperAdmin()) || $user->is($model);
-
+        return $user->is($model);
     }
 
     /**
@@ -38,7 +37,7 @@ class UserPolicy extends BasePolicy
      */
     public function update(User $user, User $model): bool
     {
-        return !($model->isSuperAdmin() && !$user->isSuperAdmin()) || $user->is($model);
+        return $user->is($model);
     }
 
     /**
@@ -46,6 +45,6 @@ class UserPolicy extends BasePolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return !($model->isSuperAdmin() && !$user->isSuperAdmin()) || $user->isNot($model);
+        return $user->isNot($model);
     }
 }

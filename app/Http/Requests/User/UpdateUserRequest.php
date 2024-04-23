@@ -48,7 +48,7 @@ class UpdateUserRequest extends FormRequest
                 'string',
                 'email',
                 'max:255',
-                Rule::exists('user', 'email')
+                Rule::unique('user', 'email')
                     ->whereNull('deleted_at')
             ],
         ];

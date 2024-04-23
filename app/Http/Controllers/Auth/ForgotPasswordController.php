@@ -16,7 +16,7 @@ class ForgotPasswordController extends Controller
     public function __invoke(ForgotPasswordRequest $request): \Illuminate\Http\JsonResponse
     {
         $status = \Password::sendResetLink([
-            $request->getUsername(),
+            'username' => $request->getUsername(),
         ]);
 
         if ($status !== \Password::RESET_LINK_SENT) {

@@ -17,10 +17,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web'])->group(function (): void {
     Route::get('check', \App\Http\Controllers\Auth\CheckLoggedInController::class);
-    Route::post('login', \App\Http\Controllers\Auth\LoginController::class);
+    Route::post('login', \App\Http\Controllers\Auth\LoginController::class)->name('login');
     Route::post('signup',\App\Http\Controllers\Auth\SignupController::class);
     Route::post('forgot-password', \App\Http\Controllers\Auth\ForgotPasswordController::class);
-    Route::post('confirm-forgot-password', \App\Http\Controllers\Auth\ResetPasswordController::class);
+    Route::post('confirm-forgot-password', \App\Http\Controllers\Auth\ResetPasswordController::class)->name('password.reset');
 
     Route::middleware(['signed'])->get(
         'email-verification/{id}/{hash}',
@@ -29,16 +29,16 @@ Route::middleware(['web'])->group(function (): void {
 });
 
 Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureLastActionUpdate::class])->group(function (): void {
-    Route::post('logout', \App\Http\Controllers\Auth\LogoutController::class);
-    Route::get('/user', \App\Http\Controllers\User\CurrentUserController::class);
+    Route::post('/logout', \App\Http\Controllers\Auth\LogoutController::class)->name('logout');
+    Route::get('/user', \App\Http\Controllers\User\CurrentUserController::class)->name('current-user');
 
     Route::prefix('/users')->group(function (): void {
-        Route::get('/', \App\Http\Controllers\User\ListUserController::class);
+        Route::get('/', \App\Http\Controllers\User\ListUserController::class)->name('users.list');
+        Route::post('/', \App\Http\Controllers\User\CreateUserController::class)->name('users.create');
         Route::prefix('{user}')->group(function (): void {
-            Route::get('/', \App\Http\Controllers\User\ShowUserController::class);
-            Route::post('/', \App\Http\Controllers\User\CreateUserController::class);
-            Route::put('/', \App\Http\Controllers\User\UpdateUserController::class);
-            Route::delete('/', \App\Http\Controllers\User\DeleteUserController::class);
+            Route::get('/', \App\Http\Controllers\User\ShowUserController::class)->name('users.show');
+            Route::put('/', \App\Http\Controllers\User\UpdateUserController::class)->name('users.update');
+            Route::delete('/', \App\Http\Controllers\User\DeleteUserController::class)->name('users.delete');
         });
     });
 });

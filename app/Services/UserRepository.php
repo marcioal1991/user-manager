@@ -36,11 +36,12 @@ class UserRepository
     public function sync(UserDTO $dto, User $user = new User()): void
     {
 
-        $user->username = $dto->username;
-        $user->mobile = $dto->mobile;
-        $user->first_name = $dto->first_name;
-        $user->last_name = $dto->last_name;
-        $user->email = $dto->email;
+        $user->username ??= $dto->username;
+        $user->mobile ??= $dto->mobile;
+        $user->first_name ??= $dto->first_name;
+        $user->last_name ??= $dto->last_name;
+        $user->email ??= $dto->email;
+        $user->password ??= ($dto->password ?? \Str::random());
 
         $user->save();
     }
@@ -48,7 +49,7 @@ class UserRepository
     public function filter(UserListDTO $dto): Builder
     {
         return User::query()->when(
-            $dto->search !== null,
+            $dto->search !== '',
             fn (Builder $builder): Builder => $builder->where(
                 fn (Builder $builder): Builder => $builder->where('first_name', $dto->search)
                     ->orWhere('last_name', $dto->search)

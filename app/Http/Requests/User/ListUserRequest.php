@@ -8,7 +8,6 @@ use App\DTO\UserListDTO;
 use App\Http\Requests\Rules\OrderDirection;
 use App\Http\Requests\Rules\UserListOrder;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class ListUserRequest extends FormRequest
 {
@@ -28,9 +27,8 @@ class ListUserRequest extends FormRequest
                 'string',
                 'max:255',
             ],
-            'order_by' => [
+            'order' => [
                 'nullable',
-                Rule::enum(UserListOrder::class),
             ],
             'page' => [
                 'nullable',
@@ -63,7 +61,7 @@ class ListUserRequest extends FormRequest
 
     protected function orderBy(): ?UserListOrder
     {
-        return $this->enum('order_by', UserListOrder::class);
+        return $this->enum('order', UserListOrder::class);
     }
 
     protected function orderDirection(): ?OrderDirection

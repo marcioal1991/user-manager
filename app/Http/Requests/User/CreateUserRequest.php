@@ -48,7 +48,7 @@ class CreateUserRequest extends FormRequest
                 'string',
                 'email',
                 'max:255',
-                Rule::exists('user', 'email')
+                Rule::unique('user', 'email')
                     ->whereNull('deleted_at')
             ],
             'username' => [
@@ -56,7 +56,7 @@ class CreateUserRequest extends FormRequest
                 'string',
                 'min:1',
                 'max:20',
-                Rule::exists('user', 'username')
+                Rule::unique('user', 'username')
                     ->whereNull('deleted_at')
             ],
         ];

@@ -19,6 +19,7 @@ class ForgotPasswordRequest extends FormRequest
         return [
             'username' => [
                 'required',
+                'string',
                 'max:255',
             ],
         ];
