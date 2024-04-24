@@ -6,12 +6,12 @@ describe('ensure that all sanctum protected routes are guarded by middleware', f
     it('should return 302 status code for all routes when not logged-in', function (): void {
         $routesNamesToEnsure = [
             'logout',
-            'api/current-user',
-            'api/users.list',
-            'api/users.show',
-            'api/users.create',
-            'api/users.update',
-            'api/users.delete',
+            'current-user',
+            'users.list',
+            'users.show',
+            'users.create',
+            'users.update',
+            'users.delete',
         ];
 
         $routes = \Illuminate\Support\Facades\Route::getRoutes();

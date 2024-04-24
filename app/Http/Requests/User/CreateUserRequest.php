@@ -18,11 +18,6 @@ class CreateUserRequest extends FormRequest
         return \Gate::allows('canCreateAnUser');
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [

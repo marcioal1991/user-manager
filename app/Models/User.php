@@ -61,16 +61,6 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     protected $table = 'user';
     protected $primaryKey = 'user_id';
     protected $connection = 'postgres';
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -79,7 +69,6 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -101,7 +90,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     }
 
 
-    protected static function newFactory($count = null, $state = []): UserFactory
+    protected static function newFactory(int $count = null, array $state = []): UserFactory
     {
         return UserFactory::new();
     }

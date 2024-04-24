@@ -55,7 +55,7 @@ services:
             - ${PWD}/frontend-app:/srv/app/
         ports:
             - '3000:3000'
-        entrypoint: /bin/sh -c "npm --ignore-scripts install && npm --ignore-scripts start"
+        entrypoint: /bin/sh -c "npm install && npm start"
         networks:
             cfp-energy:
                 ipv4_address: ${REACT_APP_HOST}

@@ -6,7 +6,7 @@ describe('test sanctum csrf-token endpoint', function (): void {
     it('should return 204 status code', function (): void {
         $response = $this->get('/sanctum/csrf-cookie');
 
-        $response->assertStatus(204);
+        $response->assertNoContent();
     });
 
     it ('should return a cookie named "XSRF-TOKEN"', function (): void {

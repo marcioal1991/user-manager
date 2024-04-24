@@ -18,7 +18,7 @@ class PasswordResetToken extends Model
     protected $primaryKey = 'email';
     protected $keyType = 'string';
 
-    public function email(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(
             User::class,
