@@ -33,6 +33,7 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureLastActionUpdate::
     Route::get('/user', \App\Http\Controllers\User\CurrentUserController::class)->name('current-user');
 
     Route::prefix('/users')->group(function (): void {
+        Route::get('/metrics', \App\Http\Controllers\Dashboard\MetricsUsersController::class)->name('users.metrics');
         Route::get('/', \App\Http\Controllers\User\ListUserController::class)->name('users.list');
         Route::post('/', \App\Http\Controllers\User\CreateUserController::class)->name('users.create');
         Route::prefix('{user}')->group(function (): void {

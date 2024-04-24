@@ -20,18 +20,15 @@ class UserSeeder extends Seeder
     {
         User::factory()
             ->superadmin()
-            ->state([
-                'created_at' => Carbon::now()->subDays(random_int(0, 365)),
-                'deleted_at' => random_int(0, 10) > 3 ? Carbon::now()->subDays(random_int(0, 365)) : null,
-            ])
             ->count(50)
             ->sequence(
                 fn (Sequence $sequence): array => [
                     'last_logged_in' =>  random_int(0, 10) > 3 ? Carbon::now()->subDays(random_int(0, 365)) : null,
                     'date_of_birth' => random_int(0, 10) > 5 ? Carbon::now()->subDays(random_int(365, 10000)) : null,
+                    'created_at' => Carbon::now()->subDays(random_int(0, 365)),
+                    'deleted_at' => random_int(0, 10) > 3 ? Carbon::now()->subDays(random_int(0, 365)) : null,
                 ]
-            )
-            ->create();
+            )->createQuietly();
 
         User::factory()
             ->notSuperadmin()
