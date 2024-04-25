@@ -23,8 +23,6 @@ class PolicyServiceProvider extends ServiceProvider
         Gate::define('canViewAnUser', [UserPolicy::class, 'view']);
         Gate::define('canViewAllUsers', [UserPolicy::class, 'viewAny']);
 
-        Gate::define('canViewDashboardMetricsTotalActiveUsers', [MetricsPolicy::class, 'totalActiveUsers']);
-        Gate::define('canViewDashboardMetricsTotalInactiveUsers', [MetricsPolicy::class, 'totalInactiveUsers']);
-        Gate::define('canViewDashboardMetricsTotalNewUsers', [MetricsPolicy::class, 'totalNewUsers']);
+        Gate::define('canViewDashboardMetrics', [MetricsPolicy::class, 'viewMetrics']);
     }
 }

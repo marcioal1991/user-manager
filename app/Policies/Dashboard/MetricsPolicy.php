@@ -6,17 +6,7 @@ use App\Policies\BasePolicy;
 
 class MetricsPolicy extends BasePolicy
 {
-    public function totalActiveUsers(): bool
-    {
-        return false;
-    }
-
-    public function totalInactiveUsers(): bool
-    {
-        return false;
-    }
-
-    public function totalNewUsers(): bool
+    public function viewMetrics(): bool
     {
         return false;
     }

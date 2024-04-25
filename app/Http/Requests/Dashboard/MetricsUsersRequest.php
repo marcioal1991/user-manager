@@ -12,7 +12,7 @@ class MetricsUsersRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return \Gate::allows('canViewDashboardMetricsTotalActiveUsers');
+        return \Gate::allows('canViewDashboardMetrics');
     }
 
     public function rules(): array

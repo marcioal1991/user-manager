@@ -67,6 +67,6 @@ class UserRepository
                 UserListOrder::ID->value,
                 $dto->orderDirection?->value ?? OrderDirection::ASCENDING->value,
             )
-        );
+        )->whereNotNull(['last_logged_in', 'mobile']);
     }
 }
