@@ -11,6 +11,7 @@ import {
 } from "@mui/icons-material";
 
 export default function Dashboard() {
+    const [hasPermission, setHasPermission] = useState(true);
     const [activeUsers, setActiveUsers] = useState(0);
     const [newUsers, setNewUsers] = useState(0);
     const [deletedUsers, setDeletedUsers] = useState(0);
@@ -32,7 +33,12 @@ export default function Dashboard() {
                 setInactiveUsers(response.data.data.total_inactive_users);
                 setLoading(false);
             })
-            .catch(console.log);
+            .catch((errorResponse) => {
+                const { status } = errorResponse.response;
+                if (status === 403) {
+                    setHasPermission(false);
+                }
+            });
     }, []);
 
     return (
@@ -41,10 +47,10 @@ export default function Dashboard() {
             menuDescription={"Check platform users metrics."}
         >
             <Container sx={{ display: "flex", justifyItems: "center"}}>
-                <DashboardCard loading={loading} icon={<PeopleAltOutlined />} textDescription="Total of active users" amount={activeUsers}></DashboardCard>
-                <DashboardCard loading={loading} icon={<PersonAddAlt1Outlined />} textDescription="Total of new users in the last 30 days" amount={newUsers}></DashboardCard>
-                <DashboardCard loading={loading} icon={<PersonRemoveAlt1Outlined />} textDescription="Total of deleted users in the last 30 days" amount={deletedUsers}></DashboardCard>
-                <DashboardCard loading={loading} icon={<ErrorOutlineOutlined />} textDescription="Users inactive for over 7 days" amount={inactiveUsers}></DashboardCard>
+                <DashboardCard hasPermission={hasPermission} loading={loading} icon={<PeopleAltOutlined />} textDescription="Total of active users" amount={activeUsers}></DashboardCard>
+                <DashboardCard hasPermission={hasPermission} loading={loading} icon={<PersonAddAlt1Outlined />} textDescription="Total of new users in the last 30 days" amount={newUsers}></DashboardCard>
+                <DashboardCard hasPermission={hasPermission} loading={loading} icon={<PersonRemoveAlt1Outlined />} textDescription="Total of deleted users in the last 30 days" amount={deletedUsers}></DashboardCard>
+                <DashboardCard hasPermission={hasPermission} loading={loading} icon={<ErrorOutlineOutlined />} textDescription="Users inactive for over 7 days" amount={inactiveUsers}></DashboardCard>
             </Container>
         </ContentWrapper>
     )

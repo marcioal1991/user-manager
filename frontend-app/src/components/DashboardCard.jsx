@@ -1,9 +1,10 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {Skeleton} from "@mui/material";
+import NoPermission from "./Utils/NoPermission";
 
 const boxStyle = {
-    flexGrow: 1,
+    flexGrow: "2 1 auto",
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -12,8 +13,17 @@ const boxStyle = {
     borderRadius: '10px',
     marginLeft: '3px',
     marginRight: '3px',
+    width: '100%'
 };
-export default function DashboardCard({ loading, icon, textDescription, amount }) {
+export default function DashboardCard({ loading, icon, textDescription, amount, hasPermission }) {
+
+    if (!hasPermission) {
+        return (
+            <Box sx={{ textAlign: 'center', ...boxStyle }}>
+                <NoPermission />
+            </Box>
+        )
+    }
     return (
         <Box sx={ boxStyle }>
             { loading ?

@@ -39,6 +39,8 @@ export default function PopoverEditButton({ id }) {
             {open && (<UserModalUpsert values={{...editModalData}}
                                        handleClose={handleClose}
                                        open={open} userId={id}
+                                       title="Edit user"
+                                       text=""
                                        alertText="User edited successfully" />)}
         </>
     )

@@ -1,19 +1,23 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import ContentWrapper from "../components/ContentWrapper";
-import UsersTableList from "../components/Utils/UsersTableList";
+import UsersTableList from "../components/UserList/UsersTableList";
 import {Skeleton} from "@mui/material";
-import UserHeaderList from "../components/Utils/UserHeaderList";
-import UserFooterList from "../components/Utils/UserFooterList";
+import UserHeaderList from "../components/UserList/UserHeaderList";
+import UserFooterList from "../components/UserList/UserFooterList";
 
-export default function UsersList()
-{
+export default function UsersList() {
+    const [hasPermission, setHasPermission] = useState(true);
     const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState([]);
     const [filter, setFilter] = useState('');
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const [totalPages, setTotalPages] = useState(1);
+
+    useEffect(() => {
+        setPage(1);
+    }, [rowsPerPage]);
     useEffect(() => {
         setLoading(true);
         axios.get('/api/users/', {
@@ -28,12 +32,13 @@ export default function UsersList()
                 setTotalPages(response.data.meta.last_page);
                 setLoading(false);
             })
-            .catch(console.log);
+            .catch((errorResponse) => {
+                const { status } = errorResponse.response;
+                if (status === 403) {
+                    setHasPermission(false);
+                }
+            });
     }, [page, rowsPerPage, filter]);
-
-    useEffect(() => {
-
-    }, [filter, ]);
 
     return (
         <ContentWrapper
@@ -44,7 +49,7 @@ export default function UsersList()
             {
                 !loading ?
                 (
-                    <UsersTableList userList={users} />
+                    <UsersTableList hasPermission={hasPermission} userList={users} />
                 ) :
                     (
                         <>

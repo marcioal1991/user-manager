@@ -5,6 +5,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import React, {Fragment} from "react";
 import UserListRow from "./UserListRow";
+import NoPermission from "../Utils/NoPermission";
 
 function createDataSet(id, name, username, email, mobile, dateOfBirth, lastLoggedIn) {
     return {
@@ -19,7 +20,7 @@ function createDataSet(id, name, username, email, mobile, dateOfBirth, lastLogge
 }
 
 
-export default function UsersTableList({ userList }) {
+export default function UsersTableList({ userList, hasPermission }) {
     const rows = userList.map((user) => {
         return createDataSet(
             user.id,
@@ -31,6 +32,10 @@ export default function UsersTableList({ userList }) {
             user.last_logged_in ? (new Date(user.last_logged_in)).toISOString() : '-',
         )
     });
+
+    if (!hasPermission) {
+        return (<NoPermission/>);
+    }
 
     return (
         <Fragment>

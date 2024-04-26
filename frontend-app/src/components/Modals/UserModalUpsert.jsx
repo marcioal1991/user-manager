@@ -70,7 +70,7 @@ const schema = Yup.object().shape({
 
 
 
-export default function UserModalUpsert({ values = null, open, handleClose, text, alertText }) {
+export default function UserModalUpsert({ values = null, open, handleClose, title, text, alertText, userId }) {
     const [saving, setSaving] = useState(false);
     const [snackOpen, setSnackOpen] = useState(false);
 
@@ -80,14 +80,20 @@ export default function UserModalUpsert({ values = null, open, handleClose, text
         onSubmit: (values, { setSubmitting }) => {
             setSaving(true);
 
-            axios.post('api/users/', {
+            const data = {
                 first_name: values.first_name,
                 last_name: values.last_name,
                 mobile: values.mobile,
                 email: values.email,
                 username: values.username,
                 date_of_birth: values.date_of_birth
-            }).then(function (response) {
+            };
+
+            const axiosInstance = userId ?
+                axios.put(`api/users/${userId}`, data) :
+                axios.post(`api/users/`, data);
+
+            axiosInstance.then(function (response) {
                 setSaving(false);
                 setSnackOpen(true);
                 handleClose();
@@ -97,7 +103,6 @@ export default function UserModalUpsert({ values = null, open, handleClose, text
                 if (status === 422) {
                     formik.setErrors(data.errors)
                 }
-
                 setSaving(false);
             })
 
@@ -112,11 +117,11 @@ export default function UserModalUpsert({ values = null, open, handleClose, text
             >
                 <Box sx={style}>
                     <Container sx={{...boxStyles, ...boxHeaderFooterStyles}}>
-                        <Typography>Create new user</Typography>
+                        <Typography>{ title }</Typography>
                     </Container>
                     <Container sx={boxStyles}>
                         <Typography variant="p" component="p">
-                            {text || "Fill in the following fields to create a new user. The user will receive an email with a link for email verification."}
+                            { text }
                         </Typography>
                         <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{mt: 3}}>
                             <Grid container spacing={2}>
@@ -229,6 +234,7 @@ export default function UserModalUpsert({ values = null, open, handleClose, text
                                         value={formik.values.username}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
+                                        disabled={userId !== null}
                                         error={
                                             formik.touched.username &&
                                             Boolean(formik.errors.username)

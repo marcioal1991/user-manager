@@ -39,7 +39,9 @@ export default function UserHeaderList({ setFilter, filter }) {
 
             <UserModalUpsert open={openModal}
                              handleClose={handleClose}
-                             alertText="User created successfully. An email has sent to email for verification"/>
+                             title="Create new user"
+                             text="Fill in the following fields to create a new user. The user will receive an email with a link for email verification."
+                             alertText="User created successfully. An email has sent to email for verification."/>
         </Box>
     )
 }
