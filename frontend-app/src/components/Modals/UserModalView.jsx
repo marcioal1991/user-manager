@@ -1,4 +1,4 @@
-import {Box, Modal, Skeleton, Typography} from "@mui/material";
+import {Alert, Box, Modal, Skeleton, Snackbar, Typography} from "@mui/material";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import {useEffect, useRef, useState} from "react";
@@ -28,8 +28,8 @@ const boxHeaderFooterStyles = {
 }
 
 export default function UserModalView({  open, handleClose, userId }) {
+    const [hasPermission, setHasPermission] = useState(true);
     const [loading, setLoading] = useState(true);
-
     const ref = useRef({});
     useEffect(() => {
         axios.get(`/api/users/${userId}`).then((axiosResponse) => {
@@ -41,8 +41,12 @@ export default function UserModalView({  open, handleClose, userId }) {
             ref.mobile = data.mobile_number || '';
             ref.username = data.username || '';
             setLoading(false);
-        }).catch(() => {
-
+        }).catch((errorResponse) => {
+            const { status } = errorResponse.response;
+            if (status === 403) {
+                setHasPermission(false);
+            }
+            setLoading(false);
         });
     }, []);
 
@@ -97,5 +101,20 @@ export default function UserModalView({  open, handleClose, userId }) {
                 </Container>
             </Box>
         </Modal>
+        <Snackbar
+            open={!hasPermission}
+            onClose={function () {
+                setHasPermission(true)
+                handleClose();
+            }}
+            autoHideDuration={6000}>
+            <Alert
+                severity="error"
+                variant="filled"
+                sx={{ width: '100%' }}
+            >
+                Only admins can make this action.
+            </Alert>
+        </Snackbar>
     </>)
 }

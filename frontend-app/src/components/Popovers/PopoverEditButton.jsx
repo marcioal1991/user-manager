@@ -1,11 +1,12 @@
 import {Edit} from "@mui/icons-material";
 import Typography from "@mui/material/Typography";
-import {IconButton} from "@mui/material";
+import {Alert, IconButton, Snackbar} from "@mui/material";
 import React, {useState} from "react";
 import UserModalUpsert from "../Modals/UserModalUpsert";
 import axios from "axios";
 
 export default function PopoverEditButton({ id }) {
+    const [hasPermission, setHasPermission] = useState(true);
     const [open, setOpen] = useState(false);
     const [editModalData, setEditModalData] = useState(null);
     const handleClick = () => {
@@ -23,6 +24,12 @@ export default function PopoverEditButton({ id }) {
                     username: data.username || '',
                 });
                 setOpen(true);
+        }).catch((errorResponse) => {
+            const { status } = errorResponse.response;
+
+            if (status === 403) {
+                setHasPermission(false);
+            }
         });
     };
 
@@ -42,6 +49,21 @@ export default function PopoverEditButton({ id }) {
                                        title="Edit user"
                                        text=""
                                        alertText="User edited successfully" />)}
+            <Snackbar
+                open={!hasPermission}
+                onClose={function () {
+                    setHasPermission(true)
+                    handleClose();
+                }}
+                autoHideDuration={6000}>
+                <Alert
+                    severity="error"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    Only admins can do this action.
+                </Alert>
+            </Snackbar>
         </>
     )
 }
