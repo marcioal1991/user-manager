@@ -43,6 +43,10 @@ class UserRepository
         $user->email ??= $dto->email;
         $user->password ??= ($dto->password ?? \Str::random());
 
+        if ($dto->superadmin !== null) {
+            $user->superadmin = $dto->superadmin;
+        }
+
         $user->save();
     }
 
@@ -67,6 +71,6 @@ class UserRepository
                 UserListOrder::ID->value,
                 $dto->orderDirection?->value ?? OrderDirection::ASCENDING->value,
             )
-        )->whereNotNull(['last_logged_in', 'mobile']);
+        );
     }
 }

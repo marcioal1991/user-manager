@@ -1,30 +1,46 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import ContentWrapper from "../components/ContentWrapper";
-import UsersTableList from "../components/UsersTableList";
+import UsersTableList from "../components/Utils/UsersTableList";
 import {Skeleton} from "@mui/material";
-import UserHeaderList from "../components/UserHeaderList";
-import UserFooterList from "../components/UserFooterList";
+import UserHeaderList from "../components/Utils/UserHeaderList";
+import UserFooterList from "../components/Utils/UserFooterList";
 
 export default function UsersList()
 {
     const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState([]);
+    const [filter, setFilter] = useState('');
+    const [page, setPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(25);
+    const [totalPages, setTotalPages] = useState(1);
     useEffect(() => {
-        axios.get('/api/users/')
+        setLoading(true);
+        axios.get('/api/users/', {
+            params: {
+                size: rowsPerPage,
+                page: page,
+                search: filter,
+            }
+        })
             .then((response) => {
                 setUsers(response.data.data);
-                setLoading(false)
+                setTotalPages(response.data.meta.last_page);
+                setLoading(false);
             })
             .catch(console.log);
-    }, []);
+    }, [page, rowsPerPage, filter]);
+
+    useEffect(() => {
+
+    }, [filter, ]);
 
     return (
         <ContentWrapper
             menuName={"User management"}
             menuDescription={"Add, edit, and view the list of your platform users."}
         >
-            <UserHeaderList />
+            <UserHeaderList setFilter={setFilter} filter={filter} />
             {
                 !loading ?
                 (
@@ -39,7 +55,16 @@ export default function UsersList()
                         </>
                     )
             }
-            <UserFooterList />
+
+            <UserFooterList
+                currentPage={page}
+                setRowsPerPage={setRowsPerPage}
+                setPage={setPage}
+                totalPages={totalPages}
+                rowsPerPage={rowsPerPage}
+                nextPage={page + 1}
+                previousPage={page - 1}
+            />
         </ContentWrapper>
     );
 }

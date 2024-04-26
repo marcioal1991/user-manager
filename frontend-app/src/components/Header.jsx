@@ -1,7 +1,10 @@
 import {AppBar as MuiAppBar, IconButton, styled, Toolbar} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import {Menu as MenuIcon} from "@mui/icons-material";
+import {Logout, Menu as MenuIcon} from "@mui/icons-material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import {useNavigate} from "react-router";
+import axios from "axios";
 
 
 const AppBar = styled(MuiAppBar, {
@@ -23,6 +26,12 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 export default function Header({ open, callback, menuName, menuDescription }) {
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        axios.post('/api/logout').then(() => {
+           navigate('/');
+        });
+    }
     return (
         <AppBar position="absolute" open={open}>
             <Toolbar
@@ -59,6 +68,10 @@ export default function Header({ open, callback, menuName, menuDescription }) {
                         { menuDescription }
                     </Typography>
                 </Box>
+                <Button color="primary" variant="outline" onClick={handleLogout} sx={{ marginLeft: "auto", justifyContent: 'flex-end' }}>
+                    Logout
+                    <Logout sx={{ marginLeft: '10px'}} />
+                </Button>
             </Toolbar>
         </AppBar>
     )
