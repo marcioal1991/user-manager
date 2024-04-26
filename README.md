@@ -1,66 +1,82 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## CFP Energy Technical Test
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This project was developed as part of the technical test for CFP Energy.
 
-## About Laravel
+## About the Repository
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This repository consists of the implementation of a user management system (a simple CRUD) and a dashboard with details about registered users. It is divided into two parts:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [Backend](https://github.com/marcioal1991/user-manager/tree/main/app)
+- [Frontend](https://github.com/marcioal1991/user-manager/tree/main/frontend-app)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Note: The repository uses the standard Laravel directory structure, with the frontend added in a separate directory.
 
-## Learning Laravel
+### Backend
+The backend utilizes [Laravel 10](https://laravel.com/docs/10.x/installation) and [PHP 8.3](https://www.php.net/releases/8.3/en.php) along with the following auxiliary packages:
+ - [Laravel Sanctum](https://laravel.com/docs/10.x/sanctum)
+ - [Laravel Telescope](https://laravel.com/docs/10.x/telescope) 
+ - [Predis](https://github.com/predis/predis)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Frontend
+The frontend is built using [React 18](https://react.dev/)  and [MUI](https://mui.com/) (a React library for Material Design System). Key additional packages used include:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+ - [Axios](https://axios-http.com/) (for asynchronous requests))
+ - [Formik](https://formik.org/) (a library for form building)
+ - [Yup](https://www.npmjs.com/package/yup) (form input validation builder)
+ - [React Router](https://reactrouter.com/en/main)
+ - [Lodash.debounce](https://lodash.com/docs#debounce)
+ - [React scripts](https://www.npmjs.com/package/react-scripts)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## Laravel Sponsors
+## Development Environment
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+The development environment uses Docker containers to run the application and is structured as follows:
+- A private network named  ```cfp-energy```
+  - Container for Nginx web server
+  - Container for PHP FastCGI (php-fpm)
+  - Container containing a Redis instance
+  - Container containing the PostgreSQL database
+  - Container for the React application
 
-### Premium Partners
+Each container has an internal Docker IP, and only necessary ports are exposed (the database port is exposed for development tools, but it can be closed for the application).
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Getting Started
+Within the repository, a folder named bin was created containing a script to set up the development environment. Simply execute the following command in the terminal (for Unix environments):
+```bash
+$ ./bin/install
+```
+Note: You will be prompted for your user password only to grant permission for the Laravel ```storage``` folder.
 
-## Contributing
+During the project build process, you will be asked to create a user to use within the application, as shown in the following image:
+![img.png](docs/create-an-user.png)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Afterward, simply wait for the frontend build to complete, which will be accessible at http://localhost:3000.
 
-## Code of Conduct
+## Project Overview
+The project communicates via API provided by the Laravel application and consumed by the React application.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The permission system consists of two roles: superadmin and normal user.
+- Superadmin: can create, delete, view, and update any user, filter the list, and also view dashboard information.
+- Normal user: can only view other users, filter the list, and perform login and logout actions.
 
-## Security Vulnerabilities
+## Interface
+### Login
+![login-page](docs/login-page.png)
+### Dashboard
+![dashboard](docs/dashboard.png)
+### User list
+![users-list](docs/users-list.png)
+### Create a new user
+![create-user-modal](docs/create-user-modal.png)
+### View user
+![view-user](docs/view-user.png)
+### Edit user
+![edit-user](docs/edit-user.png)
+### Remove User
+![remove-user](docs/remove-user.png)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Testing
+Endpoint tests have been implemented in the application. To run them, execute the following command:
+```bash 
+$ docker exec -it php_fpm bash -c "php artisan test"
+```
