@@ -25,7 +25,7 @@ const router = createBrowserRouter([
         element: <ForgotPassword />,
     },
     {
-        path: '/confirm-forgot-password/:id/:hash',
+        path: '/confirm-forgot-password/:token',
         element: <ConfirmForgotPassword />,
     },
     {

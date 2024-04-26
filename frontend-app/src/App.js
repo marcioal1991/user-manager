@@ -12,6 +12,9 @@ axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;
 axios.defaults.baseURL = 'http://localhost/';
 
+const verifyAuthRoute = () => {
+    return guestRoutes.find((item) => window.location.pathname.startsWith(item)) !== undefined;
+};
 function App() {
     const [loadingApp, setLoadingApp] = useState(true);
     const defaultTheme = createTheme({
@@ -29,14 +32,14 @@ function App() {
             axios.get('/sanctum/csrf-cookie'),
             axios.get('/api/check')
         ]).then(() => {
-            if (guestRoutes.includes(window.location.pathname)) {
+            if (verifyAuthRoute()) {
                 window.location.replace('http://localhost:3000/dashboard');
                 return;
             }
 
             setLoadingApp(false);
         }).catch((AxiosError) => {
-            if (AxiosError.response.status === 401 && !guestRoutes.includes(window.location.pathname)) {
+            if (AxiosError.response.status === 401 && !verifyAuthRoute()) {
                 window.location.replace('http://localhost:3000/');
                 return;
             }

@@ -20,7 +20,7 @@ Route::middleware(['web'])->group(function (): void {
     Route::post('login', \App\Http\Controllers\Auth\LoginController::class)->name('login');
     Route::post('signup',\App\Http\Controllers\Auth\SignupController::class);
     Route::post('forgot-password', \App\Http\Controllers\Auth\ForgotPasswordController::class);
-    Route::post('confirm-forgot-password', \App\Http\Controllers\Auth\ResetPasswordController::class)->name('password.reset');
+    Route::post('confirm-forgot-password/', \App\Http\Controllers\Auth\ResetPasswordController::class)->name('password.reset');
 
     Route::middleware(['signed'])->get(
         'email-verification/{id}/{hash}',

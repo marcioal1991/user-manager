@@ -10,6 +10,7 @@ mkdir -p ${PWD}/storage/logs && touch ${PWD}/storage/logs/laravel.log
 sudo chmod -R 777 ${PWD}/storage/
 
 docker exec -it php_fpm bash -c "composer install && php artisan key:generate"
+docker exec -it php_fpm bash -c "php artisan vendor:publish --tag=telescope-assets"
 docker exec -it php_fpm bash -c "php artisan migrate"
 docker exec -it php_fpm bash -c "php artisan app:create-super-admin-user"
 docker exec -it php_fpm bash -c "php artisan db:seed"
