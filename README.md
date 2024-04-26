@@ -80,3 +80,9 @@ Endpoint tests have been implemented in the application. To run them, execute th
 ```bash 
 $ docker exec -it php_fpm bash -c "php artisan test"
 ```
+
+### Laravel Telescope
+Laravel Telescope is available for debugging and introspection. You can access Telescope by visiting http://localhost/telescope in your web browser.
+
+Telescope provides insight into various aspects of your Laravel application, including:
+requests, cache, emails, logs, database queries, etc, 
